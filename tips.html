@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="imagers/florp.webp" type="image/webp">
+  <title>TIPS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+
+  <style>
+   
+
+    body {
+      margin: 0;
+      background-color: #490000;
+      color: white;
+      font-family: 'Press Start 2P', cursive;
+      min-width: 1024px;
+    }
+       .lore-heading {
+      background-color: #1d0000;
+      color: white;
+      text-align: center;
+      padding: 40px;
+      font-size: 18px;
+      letter-spacing: 2px;
+      border-bottom: 10px solid white;
+      border-top: 10px solid white
+    }
+
+    .lore-section {
+      max-width: 1000px;
+      margin: 60px auto;
+      padding: 0 60px;
+    }
+    /* Background images */
+    .background-image {
+      position: fixed;
+      z-index: -1;
+      opacity: 0.08;
+      width: 1000px;
+      pointer-events: none;
+    }
+
+    .bg-left-1 { top: 500px; left: 0; }
+    .bg-left-2 { bottom: 200px; left: 50px; }
+    .bg-right-1 { top: 400px; right: 0; }
+    .bg-right-2 { bottom: 200px; right: 50px; }
+
+    header {
+      background-color: #380000;
+      padding: 30px 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: bold;
+      color: white;
+    }
+
+    nav.nav {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-box {
+      background-color: white;
+      color: #250000;
+      padding: 14px 25px;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    /* Main dark red box */
+    .main-box {
+      background-color: #270000;
+      border: 8px solid white;
+      width: 70%;
+      max-width: 1000px;
+      margin: 60px auto;
+      padding: 40px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      min-height: 600px;
+    }
+
+
+    .dropdown {
+      background-color: #290000;
+      border: 4px solid white;
+      overflow: hidden;
+      height: 60px;
+      transition: height 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
+    }
+
+    .dropdown-header {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .dropdown-header h3 {
+      margin: 0;
+      font-size: 14px;
+      color: white;
+    }
+
+    .triangle {
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 14px solid white;
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .dropdown.open .triangle {
+      transform: rotate(180deg);
+    }
+
+    .dropdown-content {
+      max-height: 200px;
+      overflow-y: auto;
+      opacity: 0;
+      transition: opacity 0.3s ease 0.3s;
+      font-size: 12px;
+      line-height: 2;
+      padding: 0 20px 20px;
+      scrollbar-width: thin;
+      scrollbar-color: white #5A0000;
+    }
+
+    .dropdown-content::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .dropdown-content::-webkit-scrollbar-thumb {
+      background-color: white;
+    }
+
+    .dropdown.open .dropdown-content {
+      opacity: 1;
+    }
+
+    footer {
+      background-color: #270000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 30px 80px;
+      font-size: 13px;
+      border-top: 10px solid white;
+    }
+
+    .footer-image {
+      height: 100px;
+    }
+
+    .footer-left {
+      flex-shrink: 0;
+    }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .feedback-box {
+      background-color: white;
+      color: black;
+      padding: 10px 16px;
+      font-weight: bold;
+      font-size: 30px;
+      cursor: pointer;
+    }
+
+    .feedback-text {
+      color: white;
+      font-size: 30px;
+    }
+  </style>
+</head>
+<body>
+
+    
+
+  <!-- Background images -->
+  <img src="coolultra.jpg" class="background-image bg-left-1" alt="BG Left 1">
+  <img src="coolultra.jpg" class="background-image bg-left-2" alt="BG Left 2">
+  <img src="coolultra.jpg" class="background-image bg-right-1" alt="BG Right 1">
+  <img src="coolultra.jpg" class="background-image bg-right-2" alt="BG Right 2">
+
+  <!-- Header -->
+  <header>
+    
+    <div class="logo">ULTRAKILL</div>
+    <nav class="nav">
+      <a href="index.html" class="nav-box">Home</a>
+      <a href="tips.html" class="nav-box">Tips</a>
+      <a href="mechanics.html" class="nav-box">Mechanics</a>
+      <a href="lore.html" class="nav-box">Lore</a>
+    </nav>
+  </header>
+    <div class="lore-heading">TIPS (AND TRICKS?)</div>
+  <!-- Main box with dropdowns -->
+  <div class="main-box">
+    <!-- Top dropdown 1 -->
+    <div class="dropdown" onclick="toggleDropdown(this)">
+      <div class="dropdown-header">
+        <h3>Slam Storage</h3>
+        <div class="triangle"></div>
+      </div>
+      <div class="dropdown-content">
+        <p>Using a wall jump while slamming will keep V1 in a slamming state, but will send him with next-day delivery to the stratosphere.</p>
+      </div>
+    </div>
+
+    <!-- Top dropdown 1 -->
+    <div class="dropdown" onclick="toggleDropdown(this)">
+      <div class="dropdown-header">
+        <h3>Rocket Riding</h3>
+        <div class="triangle"></div>
+      </div>
+      <div class="dropdown-content">
+        <p>Jumping onto a rocket or whiplashing one to you will give you full control over the rocket with your movement keys. 
+          <br>
+          However, this doesn't last for long. The rocket will slowly start falling after a few seconds.</p>
+      </div>
+    </div>
+
+    <!-- Top dropdown 2 -->
+    <div class="dropdown" onclick="toggleDropdown(this)">
+      <div class="dropdown-header">
+        <h3>V2 the 2nd</h3>
+        <div class="triangle"></div>
+      </div>
+      <div class="dropdown-content">
+        <p> 
+V2 is almost on the same level of V1 in terms of maneuverability; it can dash, wall jump, and slide. 
+<br>
+It also still possesses its own Piercer Revolver and Core Eject Shotgun. 
+<br>
+<br>
+In addition to that, since the first fight with V2, V2 has now learned from it and now has a Marksman Revolver and Overheat Railgun. 
+<br>
+It also will now actively target V1’s coins- though fortunately this can be used against it.
+</p>
+      </div>
+    </div>
+
+    <!-- Lower dropdown -->
+    <div class="dropdown" onclick="toggleDropdown(this)">
+      <div class="dropdown-header">
+        <h3>V2 Extras</h3>
+        <div class="triangle"></div>
+      </div>
+      <div class="dropdown-content">
+        <p>V2 has four movement patterns which it uses based on its distance between V1. 
+            <br>
+            Each movement pattern is indicated from the color of its wings:
+            <br>
+            <br>
+            Red: 
+            <br>
+            V2 will try to rush the player down aggressively, using slides to close distance. 
+            <br>
+            Once a certain minimum distance is reached, V2 will circle-strafe at close range until the player retreats or if V2 shifts movement patterns again. 
+            <br>
+            This is the only movement pattern V2 will use when enraged.
+            <br>
+            <br>
+            Yellow: 
+            <br>
+            V2 will pick a direction to run in until it collides with something, upon which it chooses a different direction.
+            <br>
+            <br>
+            Green: 
+            <br>
+            V2 will try to rapidly gain distance from the player, at the expense of reducing its attack speed. 
+            <br>
+            This activates when the player stays close to V2 for too long, but wont trigger if the player is under 33 health.
+            <br>
+            <br>
+            Blue: 
+            <br>
+            V2 will try to circle-strafe around the player while slowly inching its way closer.
+
+
+
+
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-left">
+      <img src="Florp.webp" alt="Footer Image" class="footer-image" />
+      
+      <img src="icontwit.png" alt="Footer Image" class="footer-image"/>
+      <img src="red instagram logo-01.png" alt="Footer Image" class="footer-image"/>
+    </div>
+    <div class="footer-right">
+        <a href="feedback.html" class="feedback-box">Feedback</a>
+      <span class="feedback-text"> SEND FEEDBACK </span>
+    </div>
+  </footer>
+
+  <script>
+    function toggleDropdown(dropdown) {
+      const isOpen = dropdown.classList.contains('open');
+      dropdown.style.height = isOpen ? '60px' : '300px';
+      dropdown.classList.toggle('open');
+    }
+  </script>
+
+</body>
+</html>
+
+

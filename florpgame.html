@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Laser Boss Game</title>
+
+   <!-- Press Start 2P font -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+
+  <style>
+    html, body {
+      margin: 0; padding: 0; overflow: hidden; height: 100%; cursor: none; user-select: none;
+    }
+    #bgCanvas, #gameCanvas {
+      position: absolute; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+    }
+    #bgCanvas { z-index: 0; }
+    #gameCanvas { z-index: 1; }
+    #cursor-gun {
+      position: absolute; width: 90px; height: 90px;
+      pointer-events: none; transform: translate(-50%, -50%);
+      z-index: 2;
+    }
+    .health-bar {
+      position: absolute; left: 50%;
+      transform: translateX(-50%);
+      width: 80%; height: 25px;
+      border: 3px solid black;
+      background: #222;
+      font-family:'Press Start 2P';
+      font-weight: bold; color: white;
+      text-align: center; line-height: 25px;
+      z-index: 3;
+      user-select: none;
+    }
+    #boss-health { top: 20px; }
+    #user-health { bottom: 20px; }
+    .health-fill {
+      height: 100%; background: rgb(255, 187, 0);
+      width: 100%; transition: width 0.3s ease;
+    }
+    #win-text {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 60px; color: white;
+      font-family: Arial, sans-serif;
+      font-weight: bold;
+      text-shadow: 2px 2px 10px black;
+      z-index: 4; display: none;
+      user-select: none;
+    }
+
+    #lose-text {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 60px; color: rgb(255, 0, 0);
+      font-family: Arial, sans-serif;
+      font-weight: bold;
+      text-shadow: 2px 2px 10px black;
+      z-index: 4; display: none;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+<canvas id="gameCanvas"></canvas>
+<img src="Sharpshooter.webp" id="cursor-gun" alt="Cursor Gun" />
+
+<div id="boss-health" class="health-bar">
+  <div id="boss-fill" class="health-fill"></div>
+  <div id="boss-text">1000 / 1000</div>
+</div>
+
+<div id="user-health" class="health-bar">
+  <div id="user-fill" class="health-fill" style="background:red"></div>
+  <div id="user-text">200 / 200</div>
+</div>
+
+<div id="win-text">YOU WIN!</div>
+<div id="lose-text">YOU LOSE!</div>
+
+<script>
+(() => {
+    
+  const bg = document.getElementById('bgCanvas'), bgCtx = bg.getContext('2d');
+  const canvas = document.getElementById('gameCanvas'), ctx = canvas.getContext('2d');
+  const gun = document.getElementById('cursor-gun');
+  const bossFill = document.getElementById('boss-fill'), bossText = document.getElementById('boss-text');
+  const userFill = document.getElementById('user-fill'), userText = document.getElementById('user-text');
+  const winText = document.getElementById('win-text');
+  const loseText = document.getElementById('lose-text');
+  function resize() {
+    bg.width = canvas.width = window.innerWidth;
+    bg.height = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+ let gradOffset = 0;
+const gradSpeed = 2; // pixels per frame (adjust speed)
+
+function drawGradient() {
+  gradOffset += gradSpeed;
+  if (gradOffset > canvas.width) {
+    gradOffset = 0;
+  }
+
+  // Move gradient start and end points from left to right (shift right by gradOffset)
+  const g = bgCtx.createLinearGradient(gradOffset, 0, canvas.width + gradOffset, 0);
+  g.addColorStop(0, 'black');
+  g.addColorStop(0.5, 'black');
+  g.addColorStop(1, 'black');
+
+  bgCtx.fillStyle = g;
+  bgCtx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+
+  const bossImg = new Image();
+  bossImg.src = 'Florp.webp';
+
+  let mouseX = 0, mouseY = 0;
+  window.addEventListener('mousemove', e => {
+    mouseX = e.clientX; mouseY = e.clientY;
+    gun.style.left = mouseX + 'px'; gun.style.top = mouseY + 'px';
+  });
+
+  const boss = {
+    x: canvas.width/2 - 100, y: 150, w: 200, h: 200,
+    dir: 1, speed: 2,
+    health: 1000, maxHealth: 1000,
+    shake: 0,
+    scaleX: 1, scaleY: 1,
+    spinTime: 0,
+  };
+
+  const user = { health: 100, maxHealth: 100 };
+
+  let lasersActive = true, lastPause = Date.now();
+  const lasers = [{angle:0},{angle:Math.PI/2}];
+  let projectiles = [], canShoot = true, gameOver = false;
+
+  // Boss white boxes shot every 10 seconds (unchanged)
+  let bossShots = [];
+
+  // Shoot 10 white boxes in every direction every 10 seconds
+  function shootWhiteBoxes() {
+    if (gameOver) return;
+    const cx = boss.x + boss.w/2;
+    const cy = boss.y + boss.h/2;
+    const countPerDirection = 50;
+    const directions = [
+      0, Math.PI / 4, Math.PI / 2, 3 * Math.PI / 4,
+      Math.PI, 5 * Math.PI / 4, 3 * Math.PI / 2, 7 * Math.PI / 4
+    ];
+    const speed = 3;
+    directions.forEach(dir => {
+      for (let i = 1; i <= countPerDirection; i++) {
+        const vx = Math.cos(dir) * speed;
+        const vy = Math.sin(dir) * speed;
+        bossShots.push({ x: cx, y: cy, size: 10, vx: vx, vy: vy });
+      }
+    });
+  }
+  shootWhiteBoxes();
+  setInterval(shootWhiteBoxes, 10000);
+
+  // Stars attack variables
+  const stars = [];
+  const starCount = 15;
+  const starSize = 60;
+  let starPhase = 'hidden'; // 'hidden', 'rising', 'attacking', 'falling'
+  let starTimer = 0;
+
+  // Exponential easing functions
+  function easeOutExpo(t) {
+    return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+  }
+  function easeInExpo(t) {
+    return t === 0 ? 0 : Math.pow(2, 10 * (t - 1));
+  }
+
+  // Initialize stars off screen at bottom
+  function initStars() {
+    stars.length = 0;
+    for (let i = 0; i < starCount; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: canvas.height + starSize * 2,
+        targetY: canvas.height * 0.5 + (Math.random() - 0.5) * 100,
+        size: starSize,
+        active: false,
+      });
+    }
+  }
+  initStars();
+
+  // Handle star animation timeline
+  function updateStars(delta) {
+    starTimer += delta;
+
+    if (starPhase === 'hidden' && starTimer >= 10000) { // After 30s, stars rise
+      starPhase = 'rising';
+      starTimer = 0;
+      stars.forEach(s => { s.active = true; });
+    }
+
+    if (starPhase === 'rising') {
+      // Animate stars from offscreen bottom to targetY exponentially (duration 2 sec)
+      let t = Math.min(starTimer / 2000, 1);
+      let easeT = easeOutExpo(t);
+      stars.forEach(s => {
+        s.y = canvas.height + starSize * 2 - (canvas.height + starSize * 2 - s.targetY) * easeT;
+      });
+      if (t === 1) {
+        starPhase = 'attacking';
+        starTimer = 0;
+      }
+    }
+    else if (starPhase === 'attacking') {
+      // Move stars toward cursor (simple approach: stars move slowly towards cursor on x axis)
+      stars.forEach(s => {
+        const dx = mouseX - s.x;
+        const dy = mouseY - s.y;
+        const dist = Math.hypot(dx, dy);
+        const speed = 100 * delta / 1000; // 100 px/sec speed
+        if (dist > speed) {
+          s.x += (dx / dist) * speed;
+          s.y += (dy / dist) * speed;
+        }
+      });
+      // Check collision with cursor, deduct health once per attack phase
+      for (let s of stars) {
+        const dist = Math.hypot(mouseX - s.x, mouseY - s.y);
+        if (dist < starSize / 1.5) { // collision radius
+          if (!s.hit) {
+            user.health -= 30;
+            s.hit = true;
+            updateHealthBars();
+            if (user.health <= 0) gameLost();
+          }
+        }
+      }
+      if (starTimer >= 5000) { // After 5 seconds, stars fall down
+        starPhase = 'falling';
+        starTimer = 0;
+      }
+    }
+    else if (starPhase === 'falling') {
+      // Animate stars from current y to offscreen bottom exponentially (duration 2 sec)
+      let t = Math.min(starTimer / 2000, 1);
+      let easeT = easeInExpo(t);
+      stars.forEach(s => {
+        s.y = s.targetY + (canvas.height + starSize * 2 - s.targetY) * easeT;
+        if (t === 1) {
+          s.active = false;
+          s.hit = false;
+          s.x = Math.random() * canvas.width; // Reset x for next time
+          s.y = canvas.height + starSize * 2;
+        }
+      });
+      if (t === 1) {
+        starPhase = 'hidden';
+        starTimer = 0;
+      }
+    }
+  }
+
+  function drawStars() {
+    ctx.fillStyle = 'white';
+    stars.forEach(s => {
+      if (s.active) {
+        ctx.beginPath();
+        // Draw star shape (5-point star)
+        const cx = s.x;
+        const cy = s.y;
+        const spikes = 5;
+        const outerRadius = s.size / 2;
+        const innerRadius = outerRadius / 2.5;
+        let rot = Math.PI / 2 * 3;
+        let x = cx;
+        let y = cy;
+        const step = Math.PI / spikes;
+        ctx.moveTo(cx, cy - outerRadius);
+        for (let i = 0; i < spikes; i++) {
+          x = cx + Math.cos(rot) * outerRadius;
+          y = cy + Math.sin(rot) * outerRadius;
+          ctx.lineTo(x, y);
+          rot += step;
+
+          x = cx + Math.cos(rot) * innerRadius;
+          y = cy + Math.sin(rot) * innerRadius;
+          ctx.lineTo(x, y);
+          rot += step;
+        }
+        ctx.lineTo(cx, cy - outerRadius);
+        ctx.closePath();
+        ctx.fill();
+      }
+    });
+  }
+
+  function drawBoss() {
+    if (boss.health > 0) {
+      // Dancing squeeze: exponential easing oscillation vertically every ~1s cycle
+      const time = (Date.now() % 1000) / 1000; // 0 to 1 every second
+      // Exponential easing for smooth up/down squeeze
+      const easeVal = easeOutExpo(time < 0.5 ? time*2 : 2 - time*2); // goes 0->1->0 smoothly
+      boss.scaleX = 1 + 0.1 * easeVal;   // widen a bit
+      boss.scaleY = 1 - 0.1 * easeVal;   // squeeze vertically
+
+      // If spinning, override scale and rotation
+      if (boss.spinTime > 0) {
+        boss.spinTime -= 16; // approx frame ms
+        ctx.save();
+        ctx.translate(boss.x + boss.w / 2, boss.y + boss.h / 2);
+        const spinProgress = (1000 - boss.spinTime) / 1000; // 0 to 1
+        const spinAngle = spinProgress * 2 * Math.PI * 2; // 2 full spins in 1 sec
+        ctx.rotate(spinAngle);
+        ctx.scale(1,1);
+        ctx.drawImage(bossImg, -boss.w / 2, -boss.h / 2, boss.w, boss.h);
+        ctx.restore();
+        return;
+      }
+    } else {
+      boss.scaleX = 1;
+      boss.scaleY = 1;
+    }
+
+    const shakeX = boss.shake ? (Math.random() - 0.5) * 10 : 0;
+    const shakeY = boss.shake ? (Math.random() - 0.5) * 10 : 0;
+    ctx.save();
+    ctx.translate(boss.x + boss.w / 2 + shakeX, boss.y + boss.h / 2 + shakeY);
+    ctx.scale(boss.scaleX, boss.scaleY);
+    ctx.drawImage(bossImg, -boss.w / 2, -boss.h / 2, boss.w, boss.h);
+    ctx.restore();
+
+    if (typeof boss.shake === 'number' && isFinite(boss.shake)) boss.shake--;
+
+  }
+
+  function drawLasers() {
+    if (!lasersActive || gameOver) return;
+    const cx = boss.x + boss.w / 2, cy = boss.y + boss.h / 2;
+    lasers.forEach(l => {
+      l.angle += 0.03;
+      const len = 500;
+      l.sx = cx; l.sy = cy;
+      l.ex = cx + Math.cos(l.angle) * len;
+      l.ey = cy + Math.sin(l.angle) * len;
+
+      ctx.strokeStyle = 'yellow'; ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(l.sx, l.sy);
+      ctx.lineTo(l.ex, l.ey);
+      ctx.stroke();
+    });
+  }
+
+  function fireProjectile() {
+    if (!canShoot || gameOver) return;
+    canShoot = false;
+    setTimeout(() => canShoot = true, 1000);
+    projectiles.push({ x: mouseX, y: mouseY, size: 10, vx: 0, vy: -15 });
+  }
+
+  window.addEventListener('click', fireProjectile);
+
+  function updateProjectiles() {
+    projectiles = projectiles.filter(p => p.y > 0 && p.x > 0 && p.x < canvas.width);
+    projectiles.forEach((p, i) => {
+      p.x += p.vx; p.y += p.vy;
+      ctx.fillStyle = 'white';
+      ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+      // boss hitbox
+      if (p.x > boss.x && p.x < boss.x + boss.w && p.y > boss.y && p.y < boss.y + boss.h) {
+        boss.health -= 50;
+        boss.shake = 8;
+        boss.spinTime = 1000; // spin 1 second on hit
+        updateHealthBars();
+        projectiles.splice(i, 1);
+        if (boss.health <= 0) triggerWin();
+      }
+    });
+  }
+
+  let lastUserDamage = 0;
+  function checkUserLaserHit() {
+    if (!lasersActive || gameOver) return;
+    const now = Date.now();
+    if (now - lastUserDamage < 1000) return;
+
+    for (let l of lasers) {
+      const dx = l.ex - l.sx;
+      const dy = l.ey - l.sy;
+      const length = Math.hypot(dx, dy);
+
+      const ux = dx / length;
+      const uy = dy / length;
+
+      const px = mouseX - l.sx;
+      const py = mouseY - l.sy;
+
+      const proj = px * ux + py * uy;
+
+      if (proj < 0 || proj > length) continue;
+
+      const closestX = l.sx + proj * ux;
+      const closestY = l.sy + proj * uy;
+
+      const dist = Math.hypot(mouseX - closestX, mouseY - closestY);
+      if (dist < 20) {
+        user.health -= 20;
+        lastUserDamage = now;
+        updateHealthBars();
+        if (user.health <= 0) gameLost();
+        break;
+      }
+    }
+  }
+
+  // Check collisions with white boxes (bossShots)
+  let lastUserDamageBoxes = 0;
+  function checkUserBossShotsHit() {
+    if (gameOver) return;
+    const now = Date.now();
+    if (now - lastUserDamageBoxes < 500) return; // half second cooldown for damage from boxes
+
+    for (let i = 0; i < bossShots.length; i++) {
+      const b = bossShots[i];
+      const dist = Math.hypot(mouseX - b.x, mouseY - b.y);
+      if (dist < b.size / 2 + 10) { // 10 px cursor "hit radius"
+        user.health -= 10;
+        lastUserDamageBoxes = now;
+        updateHealthBars();
+        if (user.health <= 0) gameLost();
+        break;
+      }
+    }
+  }
+
+  function updateBossShots() {
+    bossShots = bossShots.filter(b => b.x >= 0 && b.x <= canvas.width && b.y >= 0 && b.y <= canvas.height);
+    bossShots.forEach(b => {
+      b.x += b.vx;
+      b.y += b.vy;
+      ctx.fillStyle = 'white';
+      ctx.fillRect(b.x - b.size / 2, b.y - b.size / 2, b.size, b.size);
+    });
+  }
+
+  function updateBossMovement() {
+    if (gameOver) return; // Stop movement after win
+  boss.x += boss.dir * boss.speed;
+  if (boss.x < 0 || boss.x + boss.w > canvas.width) boss.dir *= -1;
+  if (Date.now() - lastPause > 50000) {
+    lasersActive = false;
+    setTimeout(() => lasersActive = true, 5000);
+    lastPause = Date.now();
+    }
+  }
+
+  function updateHealthBars() {
+     const bp = Math.max(boss.health, 0) / boss.maxHealth;
+  bossFill.style.width = (bp * 100) + '%';
+  bossText.textContent = `${Math.max(0, boss.health)} / ${boss.maxHealth}`;
+  const up = Math.max(user.health, 0) / user.maxHealth;
+  userFill.style.width = (up * 100) + '%';
+  userText.textContent = `${Math.max(0, user.health)} / ${user.maxHealth}`;
+
+  // Boss image swap logic
+  if (boss.health <= 200 && bossImg.src.indexOf('RAGE.png') === -1) {
+    bossImg.src = 'RAGE.png';
+  } else if (boss.health <= 500 && boss.health > 200 && bossImg.src.indexOf('madflorp.png') === -1) {
+    bossImg.src = 'madflorp.png';
+  } else if (boss.health > 500 && bossImg.src.indexOf('Florp.webp') === -1) {
+    bossImg.src = 'Florp.webp';
+  }
+}
+
+  function triggerWin() {
+    gameOver = true; winText.style.display = 'block';
+    setTimeout(() => location.href = 'index.html', 5000);
+  }
+  function gameLost() {
+     gameOver = true;
+  loseText.style.display = 'block';
+  boss.shake = Infinity; // Shake forever
+  boss.speed = 0;         // Stop boss movement
+  setTimeout(() => location.href = 'index.html', 5000);
+  }
+
+  let lastFrameTime = Date.now();
+  function loop() {
+    const now = Date.now();
+    const delta = now - lastFrameTime;
+    lastFrameTime = now;
+
+    drawGradient();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    updateBossMovement();
+    drawBoss();
+    drawLasers();
+    updateProjectiles();
+    updateBossShots();
+    checkUserLaserHit();
+    checkUserBossShotsHit();
+    updateHealthBars();
+
+    updateStars(delta);
+    drawStars();
+
+    requestAnimationFrame(loop);
+  }
+
+  bossImg.onload = () => loop();
+})();
+
+</script>
+</body>
+</html>

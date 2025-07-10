@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="imagers/florp.webp" type="image/webp">
+  <title>Feedback</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <style>
+    /* Background images (kept) */
+    .background-image {
+      position: fixed;
+      z-index: -1;
+      opacity: 0.08;
+      width: 1000px;
+      height: auto;
+      pointer-events: none;
+    }
+    .bg-left-1 { top: 500px; left: 0; }
+    .bg-left-2 { bottom: 200px; left: 50px; }
+    .bg-right-1 { top: 400px; right: 0; }
+    .bg-right-2 { bottom: 200px; right: 50px; }
+
+    /* Body & background */
+    body {
+      margin: 0;
+      background-color: #490000;
+      color: white;
+      font-family: 'Press Start 2P', cursive;
+      min-width: 1024px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+.feedback-container {
+  background-color: #8B0000;
+  max-width: 600px;
+  margin: 3rem auto;
+  padding: 2.5rem 3rem;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  color: white;
+  user-select: none;
+  
+  flex-grow: 1; /* ADD THIS LINE */
+}
+    /* Header */
+    header {
+      background-color: #310000;
+      padding: 30px 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+    .logo {
+      font-size: 22px;
+      font-weight: bold;
+      color: white;
+    }
+    nav.nav {
+      display: flex;
+      gap: 30px;
+    }
+    .nav-box {
+      background-color: white;
+      color: #250000;
+      padding: 14px 25px;
+      font-weight: bold;
+      font-size: 13px;
+      text-decoration: none;
+      user-select: none;
+    }
+    .nav-box:hover {
+      background-color: #ddd;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #200000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 30px 80px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 13px;
+      user-select: none;
+      color: white;
+      border-top: 10px solid white;
+      max-height: 100px;
+      
+        position: static;
+    }
+    .footer-image {
+      height: 100px;
+      width: auto;
+      object-fit: contain;
+    }
+    .footer-left {
+      flex-shrink: 0;
+    }
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+   .feedback-box {
+      background-color: white;
+      color: black;
+      padding: 10px 16px;
+      border-radius: 0;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      font-size: 30px;
+      white-space: nowrap;
+    }
+    /* Feedback Box */
+    .feedback-container {
+      background-color: #8B0000;
+      max-width: 600px;
+      margin: 3rem auto;
+      padding: 2.5rem 3rem;
+      border-radius: 0px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      color: white;
+      user-select: none;
+      border: 5px solid white;
+    }
+
+    .feedback-container h1 {
+      font-size: 3.5rem;
+      margin: 0;
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
+    .feedback-container p.subtitle {
+      font-size: 1.3rem;
+      margin: 0.2rem 0 1.5rem 0;
+      font-weight: 400;
+      letter-spacing: 1px;
+    }
+
+    /* Email Input */
+    .email-input {
+      padding: 0.6rem 1rem;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 1rem;
+      border-radius: 0px;
+      border: none;
+      outline: none;
+      margin-bottom: 1.5rem;
+      max-width: 100%;
+    }
+
+    /* Stars container */
+    .stars-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      user-select: none;
+    }
+    .stars {
+      display: flex;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    /* Star styles */
+    .star {
+      font-size: 2.5rem;
+      color: gray;
+      transition: color 0.3s ease;
+      transform-origin: center center;
+      display: inline-block;
+    }
+    .star.yellow {
+      color: #FFD700; /* Gold/yellow */
+      animation: starRotate 0.6s cubic-bezier(0.6, 0, 0.4, 1);
+    }
+
+    @keyframes starRotate {
+      0%   { transform: rotate(0deg) scale(1); }
+      50%  { transform: rotate(360deg) scale(1.2); }
+      100% { transform: rotate(720deg) scale(1); }
+    }
+
+    .rate-us-text {
+      font-size: 1rem;
+      margin-top: 0.5rem;
+      letter-spacing: 1px;
+    }
+
+    /* Message and send button container */
+    .message-send-container {
+      display: flex;
+      gap: 15px;
+      align-items: flex-start;
+    }
+
+    /* Message box */
+    textarea.message-box {
+      flex-grow: 1;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 1rem;
+      padding: 0.7rem 1rem;
+      border-radius: 0px;
+      border: none;
+      resize: vertical;
+      min-height: 100px;
+      outline: none;
+    }
+
+    /* Send button */
+    button.send-btn {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 1rem;
+      background-color: #FFD700;
+      border: none;
+      color: #490000;
+      padding: 1rem 2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      user-select: none;
+      transition: background-color 0.3s ease;
+      white-space: nowrap;
+    }
+    button.send-btn:active {
+      background-color: #e6c200;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Background images -->
+  <img src="coolultra.jpg" class="background-image bg-left-1" alt="Background Left 1" />
+  <img src="coolultra.jpg" class="background-image bg-left-2" alt="Background Left 2" />
+  <img src="coolultra.jpg" class="background-image bg-right-1" alt="Background Right 1" />
+  <img src="coolultra.jpg" class="background-image bg-right-2" alt="Background Right 2" />
+
+  <!-- Header -->
+  <header>
+    <div class="logo">ULTRAKILL</div>
+    <nav class="nav">
+      <a href="index.html" class="nav-box">Home</a>
+      <a href="tips.html" class="nav-box">Tips</a>
+      <a href="mechanics.html" class="nav-box">Mechanics</a>
+      <a href="lore.html" class="nav-box">Lore</a>
+    </nav>
+  </header>
+
+  <!-- Feedback box -->
+  <div class="feedback-container" role="form" aria-label="Feedback form">
+    <h1>FEEDBACK</h1>
+    <p class="subtitle">send us feedback!</p>
+
+    <input type="email" placeholder="Your email" class="email-input" aria-label="Email address" />
+
+    <div class="stars-container">
+      <div class="stars" role="radiogroup" aria-label="Rate us">
+        <span class="star" role="radio" aria-checked="false" tabindex="0" data-index="1">&#9733;</span>
+        <span class="star" role="radio" aria-checked="false" tabindex="-1" data-index="2">&#9733;</span>
+        <span class="star" role="radio" aria-checked="false" tabindex="-1" data-index="3">&#9733;</span>
+        <span class="star" role="radio" aria-checked="false" tabindex="-1" data-index="4">&#9733;</span>
+        <span class="star" role="radio" aria-checked="false" tabindex="-1" data-index="5">&#9733;</span>
+      </div>
+      <div class="rate-us-text">rate us</div>
+    </div>
+
+    <div class="message-send-container">
+      <textarea class="message-box" placeholder="Your message..." aria-label="Message"></textarea>
+      <button class="send-btn" type="button">send</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-left">
+      <img src="Florp.webp" alt="Footer Image" class="footer-image" />
+      <img src="icontwit.png" alt="Footer Image" class="footer-image"/>
+      <img src="red instagram logo-01.png" alt="Footer Image" class="footer-image"/>
+    </div>
+    <div class="footer-right">
+      <div class="feedback-box">CLICK HERE!</div>
+      <span class="feedback-text"> &lt;-- SEND FEEDBACK </span>
+    </div>
+  </footer>
+
+  <script>
+    const stars = document.querySelectorAll('.star');
+    const rateUsText = document.querySelector('.rate-us-text');
+    let currentRating = 0;
+
+    stars.forEach((star, i) => {
+      star.addEventListener('click', () => {
+        currentRating = i + 1;
+        updateStars();
+      });
+
+      star.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          currentRating = i + 1;
+          updateStars();
+          stars[i].focus();
+        }
+      });
+    });
+
+    function updateStars() {
+      stars.forEach((star, idx) => {
+        if (idx < currentRating) {
+          if (!star.classList.contains('yellow')) {
+            // Trigger animation by removing and re-adding class
+            star.classList.remove('yellow');
+            void star.offsetWidth;
+            star.classList.add('yellow');
+          }
+          star.setAttribute('aria-checked', 'true');
+          star.tabIndex = 0;
+        } else {
+          star.classList.remove('yellow');
+          star.setAttribute('aria-checked', 'false');
+          star.tabIndex = -1;
+        }
+      });
+    }
+
+    // Send button logic
+    const sendBtn = document.querySelector('.send-btn');
+    const messageBox = document.querySelector('.message-box');
+
+    sendBtn.addEventListener('click', () => {
+      // Change button text to 'sent'
+      sendBtn.textContent = 'SENT!';
+
+      // Clear message box
+      messageBox.value = '';
+
+      // Optionally reset rating or email? Not specified, so leaving as-is.
+
+      // Reset button text back to 'send' after 2.5s
+      setTimeout(() => {
+        sendBtn.textContent = 'send';
+      }, 2500);
+    });
+  </script>
+
+</body>
+</html>

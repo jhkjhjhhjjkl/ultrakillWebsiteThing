@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="imagers/florp.webp" type="image/webp">
+  <title>LORE</title>
+
+  <!-- Press Start 2P font -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+
+  <style>
+
+    .background-image {
+        position: fixed;
+        z-index: -1;
+        opacity: 0.08; /* subtle background */
+        width: 1000px;
+        height: auto;
+        pointer-events: none;
+}
+
+.bg-left-1 {
+  top: 500px;
+  left: 0;
+}
+
+.bg-left-2 {
+  bottom: 200px;
+  left: 50px;
+}
+
+.bg-right-1 {
+  top: 400px;
+  right: 0;
+}
+
+.bg-right-2 {
+  bottom: 200px;
+  right: 50px;
+}
+
+    body {
+      margin: 0;
+      background-color: #001d49;
+      color: white;
+      font-family: 'Press Start 2P', cursive;
+      min-width: 1024px;
+    }
+
+    header {
+      background-color: #030027;
+      padding: 30px 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: bold;
+      color: white;
+    }
+
+    nav.nav {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-box {
+      background-color: white;
+      color: #250000;
+      padding: 14px 25px;
+      border-radius: 0px;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 13px;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+
+    .nav-box:hover {
+      background-color: #dddddd;
+    }
+
+    .header-image {
+      display: block;
+      width: 100%;
+      max-height: 400px;
+      object-fit: cover;
+      border: 10px solid white;
+    }
+
+    .separator {
+      height: 2px;
+      background-color: white;
+      margin: 0;
+    }
+
+    .lore-heading {
+      background-color: #050022;
+      color: white;
+      text-align: center;
+      padding: 40px;
+      font-size: 18px;
+      letter-spacing: 2px;
+      border-bottom: 10px solid white;
+    }
+
+    .lore-section {
+      max-width: 1000px;
+      margin: 60px auto;
+      padding: 0 60px;
+    }
+
+    .dropdown {
+      background-color: #0d0025;
+      border: 4px solid white;
+      margin-bottom: 40px;
+      overflow: hidden;
+      transition: height 1s cubic-bezier(0.19, 1, 0.22, 1);
+      height: 60px;
+      position: relative;
+    }
+
+    .dropdown-header {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .dropdown-header h3 {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .triangle {
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 14px solid white;
+      transition: transform 1s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+
+    .dropdown.open .triangle {
+      transform: rotate(180deg);
+    }
+
+    .dropdown-content {
+        max-height: 200px;
+        overflow-y: auto;
+        padding: 0 20px 20px;
+        opacity: 0;
+        transition: opacity 0.3s ease 0.3s;
+        font-size: 12px;
+        line-height: 2;
+        scrollbar-width: thin;
+        scrollbar-color: white #5A0000;
+}
+
+.dropdown-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dropdown-content::-webkit-scrollbar-thumb {
+  background-color: white;
+}
+
+.dropdown.open .dropdown-content {
+  opacity: 1;
+}
+
+
+    .dropdown.open .dropdown-content {
+      opacity: 1;
+    }
+
+    footer {
+      background-color: #0a0027;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 30px 80px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 13px;
+      user-select: none;
+      color: white;
+      border-top: 10px solid white;
+      max-height: 35px;
+    }
+
+    .footer-image {
+      height: 100px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .footer-left {
+      flex-shrink: 0;
+    }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .feedback-box {
+      background-color: white;
+      color: black;
+      padding: 10px 16px;
+      border-radius: 0;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      font-size: 30px;
+      white-space: nowrap;
+    }
+
+    .feedback-text {
+      color: white;
+      font-size: 30px;
+      user-select: none;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+    <img src="coolultra.jpg" class="background-image bg-left-1" alt="Background Left 1">
+    <img src="coolultra.jpg" class="background-image bg-left-2" alt="Background Left 2">
+    <img src="coolultra.jpg" class="background-image bg-right-1" alt="Background Right 1">
+    <img src="coolultra.jpg" class="background-image bg-right-2" alt="Background Right 2">
+
+  <header>
+    <div class="logo">ULTRAKILL</div>
+    <nav class="nav">
+      <a href="index.html" class="nav-box">Home</a>
+      <a href="tips.html" class="nav-box">Tips</a>
+      <a href="mechanics.html" class="nav-box">Mechanics</a>
+      <a href="lore.html" class="nav-box">Lore</a>
+    </nav>
+  </header>
+
+  <hr class="separator" />
+
+  <img src="council.jpg" alt="Header Banner" class="header-image" />
+
+  <div class="lore-heading">LORE</div>
+
+  <section class="lore-section">
+    <div class="dropdown" onclick="toggleDropdown(this)">
+      <div class="dropdown-header">
+        <h3>HEAVEN, HELL AND EARTH</h3>
+        <div class="triangle"></div>
+      </div>
+      <div class="dropdown-content">
+        <p>
+          In the beginning, there was nothing—until God created Heaven and Earth.
+<br>
+Ultrakill’s story starts in Genesis. Heaven was made as a perfect home for angels. God gave humanity free will, hoping they’d choose kindness. But humanity failed. And God saw free will as the problem.
+<br>
+He tried creating new beings without free will, but none succeeded. Furious that humanity still existed, He created Hell—something He could not undo.
+<br>
+Ultrakill’s Hell is heavily inspired by Dante’s Inferno, featuring nine circles.
+<br>
+God eventually became hopeless, believing all He brought to the universe was pain. He disappeared. God is dead. And His replacement—the Council of Heaven—is not worth celebrating.
+<br>
+The Council is a group of powerful angels who rule Heaven. We don’t know much about them, but they clearly hold authority—shown by how loyal the Archangel Gabriel is. After King Minos dies, the Council makes Gabriel the new judge of Hell.
+<br>
+Eventually, V1 (the machine) defeats Gabriel in battle using literal pocket change. Gabriel retreats to Heaven. The Council is disappointed. As punishment, they strip him of his divine light and give him 24 hours to redeem himself.
+<br>
+Spoiler: he loses again.
+<br>
+Two defeats change Gabriel. Facing death, he takes drastic action.
+<br>
+He storms Heaven. The counselors lie dead. One begs for his life, warning Gabriel he’ll die without the Council. Gabriel already knows. God is gone. The world is ending. With one final blow, Gabriel ends the Council—and seals his fate.
+
+
+        </p>
+      </div>
+    </div>
+
+    <div class="dropdown" onclick="toggleDropdown(this)">
+      <div class="dropdown-header">
+        <h3>THE FINAL WAR</h3>
+        <div class="triangle"></div>
+      </div>
+      <div class="dropdown-content">
+        <p>
+          The Final War was a 200-year-long conflict that introduced blood-powered machines and nearly wiped out humanity. In Ultrakill, it's their version of World War I.
+<br>
+The first of these machines, the Gutterman, was used in trench warfare—airdropped into enemy trenches and armed with built-in miniguns to clear them out.
+<br>
+The strategy was so effective that opposing forces responded with the Guttertank, a heavier version based on the same design. Unlike the Gutterman, it didn’t need external fuel—blood powered it entirely.
+<br>
+Eventually, soldiers were sent home because machines had taken over the battlefield. This led nations to invest everything into building more war machines, pushing humanity into collapse.
+<br>
+A quote from the Guttertank’s terminal captures it best:
+<br>
+"Conquest leads to war.
+War leads to famine.
+Famine leads to..."
+<br>
+The war shifted from fighting over land to building better machines. As one hidden text in Ultrakill puts it:
+<br>
+“Man was crushed under the wheels of a machine created to create the machine to crush the machine.”
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-left">
+      
+        <img src="Florp.webp" alt="Footer Image" class="footer-image" />
+        
+       <img src="icontwit.png" alt="Footer Image" class="footer-image"/>
+        <img src="red instagram logo-01.png" alt="Footer Image" class="footer-image"/>
+    </div>
+    <div class="footer-right">
+        <a href="feedback.html" class="feedback-box">Feedback</a>
+      <span class="feedback-text"> SEND FEEDBACK </span>
+    </div>
+  </footer>
+
+  <script>
+  function toggleDropdown(dropdown) {
+    const isOpen = dropdown.classList.contains('open');
+    const content = dropdown.querySelector('.dropdown-content');
+    const expandedHeight = '300px';
+
+    if (isOpen) {
+      dropdown.style.height = '60px';
+      dropdown.classList.remove('open');
+    } else {
+      dropdown.style.height = expandedHeight;
+      dropdown.classList.add('open');
+    }
+  }
+</script>
+
+</body>
+</html>
+
+
